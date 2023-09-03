@@ -13,7 +13,7 @@ Base.metadata.create_all(engine)
 router = APIRouter()
 
 
-@router.post("/dailytask", response_model=schemas.DailyTask, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.DailyTask, status_code=status.HTTP_201_CREATED)
 async def create_daily_task(daily_task: schemas.DailyTaskCreate, session: Session = Depends(depends.get_session)):
 
     # create an instance of the dailytask database model
@@ -29,7 +29,7 @@ async def create_daily_task(daily_task: schemas.DailyTaskCreate, session: Sessio
     return daily_task_db
 
 
-@router.get("/dailytask/{id}", response_model=schemas.DailyTask)
+@router.get("/{id}", response_model=schemas.DailyTask)
 def read_daily_task(id: int, session: Session = Depends(depends.get_session)):
 
     # get the daily task item with the given id
@@ -43,7 +43,7 @@ def read_daily_task(id: int, session: Session = Depends(depends.get_session)):
     return daily_task
 
 
-@router.put("/dailytask/{id}", response_model=schemas.DailyTask)
+@router.put("/{id}", response_model=schemas.DailyTask)
 def update_daily_task(id: int, daily_task: schemas.DailyTaskUpdate, session: Session = Depends(depends.get_session)):
 
     # get the daily task item with the given id
@@ -63,7 +63,7 @@ def update_daily_task(id: int, daily_task: schemas.DailyTaskUpdate, session: Ses
     return daily_task_db
 
 
-@router.delete("/dailytask/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_daily_task(id: int, session: Session = Depends(depends.get_session)):
 
     # get the daily task item with the given id
@@ -80,7 +80,7 @@ def delete_daily_task(id: int, session: Session = Depends(depends.get_session)):
     return None
 
 
-@router.get("/dailytask", response_model=List[schemas.DailyTask])
+@router.get("/", response_model=List[schemas.DailyTask])
 def read_daily_task_list(user: int = Cookie(None), session: Session = Depends(depends.get_session)):
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")

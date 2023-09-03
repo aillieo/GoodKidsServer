@@ -19,24 +19,3 @@ class DailyTask(DailyTaskBase):
 
     class Config:
         orm_mode = True
-
-# Base User Schema (Pydantic Model)
-class UserBase(BaseModel):
-    name: str
-    password: str
-
-# Create User Schema (Pydantic Model)
-class UserCreate(UserBase):
-    pass
-
-# Update User Schema (Pydantic Model)
-class UserUpdate(UserBase):
-    pass
-
-# Complete User Schema (Pydantic Model)
-class User(UserBase):
-    id: int
-
-    class Config:
-        orm_mode = True
-

@@ -13,7 +13,7 @@ Base.metadata.create_all(engine)
 router = APIRouter()
 
 
-@router.post("/user", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
 async def create_user(user: schemas.UserCreate, session: Session = Depends(depends.get_session)):
 
     # create an instance of the user database model
@@ -28,7 +28,7 @@ async def create_user(user: schemas.UserCreate, session: Session = Depends(depen
     return user_db
 
 
-@router.get("/user/{id}", response_model=schemas.User)
+@router.get("/{id}", response_model=schemas.User)
 def read_user(id: int, session: Session = Depends(depends.get_session)):
 
     # get the user item with the given id
@@ -42,7 +42,7 @@ def read_user(id: int, session: Session = Depends(depends.get_session)):
     return user
 
 
-@router.put("/user/{id}", response_model=schemas.User)
+@router.put("/{id}", response_model=schemas.User)
 def update_user(id: int, user: schemas.UserUpdate, session: Session = Depends(depends.get_session)):
 
     # get the user item with the given id
@@ -62,7 +62,7 @@ def update_user(id: int, user: schemas.UserUpdate, session: Session = Depends(de
     return user_db
 
 
-@router.delete("/user/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(id: int, session: Session = Depends(depends.get_session)):
 
     # get the user item with the given id
@@ -79,7 +79,7 @@ def delete_user(id: int, session: Session = Depends(depends.get_session)):
     return None
 
 
-@router.get("/user", response_model=List[schemas.User])
+@router.get("/", response_model=List[schemas.User])
 def read_user_list(session: Session = Depends(depends.get_session)):
 
     # get all user items

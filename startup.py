@@ -3,8 +3,6 @@ import signal
 from fastapi.responses import JSONResponse
 import uvicorn
 from fastapi import Cookie, FastAPI, Request
-import importlib
-import os
 from typing import List
 from fastapi import FastAPI, status, HTTPException, Depends
 from database import Base, engine, SessionLocal
@@ -13,6 +11,7 @@ import depends
 import models
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
+import routers
 
 # Create the database
 Base.metadata.create_all(engine)
@@ -32,44 +31,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Helper function to get database session
-def get_session():
-    session = SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
-
 
 @app.get("/")
 def root():
     return "good-kids-app"
 
+
 @app.post("/login")
 async def login(request: Request, session: Session = Depends(depends.get_session)):
-    print(request)
-    print(request.body)
     data = await request.json()
-    print(data)
     name = data.get("name")
     password = data.get("password")
 
-    user = session.query(models.User).filter(models.User.name == name, models.User.password == password).first()
+    user = session.query(models.User).filter(
+        models.User.name == name, models.User.password == password).first()
     if user:
-        response = JSONResponse({"user" : user.id})
+        response = JSONResponse({"user": user.id})
         response.set_cookie(key="user", value=user.id)
         return response
     else:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-def register_routers(app):
-    folder_name = "routers"
-    router_files = [f for f in os.listdir(folder_name) if f.endswith(".py")]
 
-    for router_file in router_files:
-        module_name = f"{folder_name}.{router_file.rpartition('.')[0]}"
-        module = importlib.import_module(module_name)
-        app.include_router(module.router)
+def register_routers(app):
+    app.include_router(routers.router)
 
 
 async def shutdown():

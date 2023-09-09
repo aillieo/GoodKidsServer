@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, security
 from typing import List
 from fastapi import FastAPI, status, HTTPException, Depends
 from database import Base, engine, SessionLocal
@@ -16,8 +16,20 @@ router = APIRouter()
 @router.post("/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
 async def create_user(user: schemas.UserCreate, session: Session = Depends(depends.get_session)):
 
+    user_db = session.query(models.User).filter(
+        models.User.name == user.name).first()
+
+    if user_db:
+        raise HTTPException(
+            status_code=400,
+            detail=f"The user with this username {user.name} already exists in the system.",
+        )
+
     # create an instance of the user database model
-    user_db = models.User(name=user.name, password=user.password)
+    user_db = models.User(
+        name=user.name,
+        password=security.get_hashes_password(user.password)
+    )
 
     # add it to the session and commit it
     session.add(user_db)

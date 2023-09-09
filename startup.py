@@ -12,6 +12,8 @@ import models
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import routers
+import schemas
+import security
 
 # Create the database
 Base.metadata.create_all(engine)
@@ -38,7 +40,7 @@ def root():
 
 
 @app.post("/login")
-async def login(request: Request, session: Session = Depends(depends.get_session)):
+async def login(request: Request, session: Session = Depends(depends.get_session)) -> schemas.Token:
     data = await request.json()
     name = data.get("name")
     password = data.get("password")
@@ -46,9 +48,9 @@ async def login(request: Request, session: Session = Depends(depends.get_session
     user = session.query(models.User).filter(
         models.User.name == name, models.User.password == password).first()
     if user:
-        response = JSONResponse({"user": user.id})
-        response.set_cookie(key="user", value=user.id)
-        return response
+        token = schemas.Token(
+            token=security.create_token(user.id), uid=user.id)
+        return token
     else:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 

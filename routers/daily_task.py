@@ -81,7 +81,9 @@ def delete_daily_task(id: int, session: Session = Depends(depends.get_session)):
 
 
 @router.get("/", response_model=List[schemas.DailyTask])
-def read_daily_task_list(user: int = Cookie(None), session: Session = Depends(depends.get_session)):
+def read_daily_task_list(
+        user: schemas.User = Depends(depends.get_current_user),
+        session: Session = Depends(depends.get_session)):
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 

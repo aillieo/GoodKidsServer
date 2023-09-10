@@ -13,33 +13,6 @@ Base.metadata.create_all(engine)
 router = APIRouter()
 
 
-@router.post("/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
-async def create_user(user: schemas.UserCreate, session: Session = Depends(depends.get_session)):
-
-    user_db = session.query(models.User).filter(
-        models.User.name == user.name).first()
-
-    if user_db:
-        raise HTTPException(
-            status_code=400,
-            detail=f"The user with this username {user.name} already exists in the system.",
-        )
-
-    # create an instance of the user database model
-    user_db = models.User(
-        name=user.name,
-        password=security.get_hashes_password(user.password)
-    )
-
-    # add it to the session and commit it
-    session.add(user_db)
-    session.commit()
-    session.refresh(user_db)
-
-    # return the user object
-    return user_db
-
-
 @router.get("/{id}", response_model=schemas.User)
 def read_user(id: int, session: Session = Depends(depends.get_session)):
 

@@ -1,19 +1,14 @@
 import asyncio
 import signal
-from fastapi.responses import JSONResponse
 import uvicorn
-from fastapi import Cookie, FastAPI, Request
+from fastapi import Cookie, FastAPI
 from typing import List
-from fastapi import FastAPI, status, HTTPException, Depends
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
-import depends
-import models
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import routers
-import schemas
-import security
+import login
 
 # Create the database
 Base.metadata.create_all(engine)
@@ -39,23 +34,8 @@ def root():
     return "good-kids-app"
 
 
-@app.post("/login")
-async def login(request: Request, session: Session = Depends(depends.get_session)) -> schemas.Token:
-    data = await request.json()
-    name = data.get("name")
-    password = data.get("password")
-
-    user = session.query(models.User).filter(
-        models.User.name == name, models.User.password == password).first()
-    if user:
-        token = schemas.Token(
-            token=security.create_token(user.id), uid=user.id)
-        return token
-    else:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-
 def register_routers(app):
+    app.include_router(login.router)
     app.include_router(routers.router)
 
 

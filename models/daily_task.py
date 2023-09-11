@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 # Define DailyTask class inheriting from Base
+
+
 class DailyTask(Base):
     __tablename__ = 'dailytasks'
     id = Column(Integer, primary_key=True)

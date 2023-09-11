@@ -25,12 +25,10 @@ def get_session():
 
 
 def get_current_user(token: str = Depends(reusable_oauth2), session: Session = Depends(get_session)) -> schemas.User:
-    print(token)
     try:
         payload = jwt.decode(
             token, security.JWT_SECRET_KEY, algorithms=[security.ALGORITHM]
         )
-        print(payload)
 
         token_data = schemas.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):

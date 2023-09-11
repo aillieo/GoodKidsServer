@@ -14,11 +14,14 @@ router = APIRouter()
 
 
 @router.post("/", response_model=schemas.DailyTask, status_code=status.HTTP_201_CREATED)
-async def create_daily_task(daily_task: schemas.DailyTaskCreate, session: Session = Depends(depends.get_session)):
+async def create_daily_task(daily_task: schemas.DailyTaskCreate,
+                            user: schemas.User = Depends(
+                                depends.get_current_user),
+                            session: Session = Depends(depends.get_session)):
 
     # create an instance of the dailytask database model
     daily_task_db = models.DailyTask(
-        taskName=daily_task.taskName, taskDes=daily_task.taskDes)
+        taskName=daily_task.taskName, taskDes=daily_task.taskDes, user=user)
 
     # add it to the session and commit it
     session.add(daily_task_db)
@@ -30,7 +33,9 @@ async def create_daily_task(daily_task: schemas.DailyTaskCreate, session: Sessio
 
 
 @router.get("/{id}", response_model=schemas.DailyTask)
-def read_daily_task(id: int, session: Session = Depends(depends.get_session)):
+def read_daily_task(id: int,
+                    user: schemas.User = Depends(depends.get_current_user),
+                    session: Session = Depends(depends.get_session)):
 
     # get the daily task item with the given id
     daily_task = session.query(models.DailyTask).get(id)
@@ -44,7 +49,9 @@ def read_daily_task(id: int, session: Session = Depends(depends.get_session)):
 
 
 @router.put("/{id}", response_model=schemas.DailyTask)
-def update_daily_task(id: int, daily_task: schemas.DailyTaskUpdate, session: Session = Depends(depends.get_session)):
+def update_daily_task(id: int, daily_task: schemas.DailyTaskUpdate,
+                      user: schemas.User = Depends(depends.get_current_user),
+                      session: Session = Depends(depends.get_session)):
 
     # get the daily task item with the given id
     daily_task_db = session.query(models.DailyTask).get(id)
@@ -64,7 +71,9 @@ def update_daily_task(id: int, daily_task: schemas.DailyTaskUpdate, session: Ses
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_daily_task(id: int, session: Session = Depends(depends.get_session)):
+def delete_daily_task(id: int,
+                      user: schemas.User = Depends(depends.get_current_user),
+                      session: Session = Depends(depends.get_session)):
 
     # get the daily task item with the given id
     daily_task = session.query(models.DailyTask).get(id)
@@ -88,6 +97,7 @@ def read_daily_task_list(
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     # get all daily task items
-    daily_task_list = session.query(models.DailyTask).all()
+    daily_task_list = session.query(models.DailyTask).filter(
+        models.DailyTask.user_id == user.id).all()
 
     return daily_task_list

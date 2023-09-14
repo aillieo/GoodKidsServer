@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Enum, DateTime
 from database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from enums import UserType
+from datetime import datetime
 
 # Define User class inheriting from Base
 
@@ -12,4 +12,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     password = Column(String)
-    tasks = relationship('DailyTask', back_populates='user')
+    user_type = Column(Enum(UserType))
+    create_time = Column(DateTime, default=datetime.now)
+    update_time = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    
+    daily_tasks = relationship('DailyTask', back_populates='user')

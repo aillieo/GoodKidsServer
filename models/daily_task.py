@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, ARRAY
 from database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
 # Define DailyTask class inheriting from Base
 
@@ -12,5 +11,9 @@ class DailyTask(Base):
     id = Column(Integer, primary_key=True)
     taskName = Column(String(256))
     taskDes = Column(String(256))
+    create_time = Column(DateTime, default=datetime.now)
+
     user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship('User', back_populates='tasks')
+    user = relationship('User', back_populates='daily_tasks')
+
+    completion_records = relationship('CompletionRecord', back_populates='task')

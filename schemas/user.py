@@ -1,10 +1,13 @@
 from typing import Optional
 from pydantic import BaseModel
+
+from enums import UserType
 # Base User Schema (Pydantic Model)
 
 
 class UserBase(BaseModel):
     username: str
+
 
 # Create User Schema (Pydantic Model)
 
@@ -22,6 +25,7 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     id: int
+    user_type: UserType
     password: str
 
     class Config:

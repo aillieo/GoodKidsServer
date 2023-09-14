@@ -70,6 +70,30 @@ def update_daily_task(id: int, daily_task: schemas.DailyTaskUpdate,
     return daily_task_db
 
 
+@router.post("/{id}/complete", response_model=schemas.DailyTask)
+def update_daily_task(id: int,
+                      user: schemas.User = Depends(depends.get_current_user),
+                      session: Session = Depends(depends.get_session)):
+
+    # get the daily task item with the given id
+    daily_task_db = session.query(models.DailyTask).get(id)
+
+    # check if daily task item with given id exists. If not, raise exception and return 404 not found response
+    if not daily_task_db:
+        raise HTTPException(
+            status_code=404, detail=f"daily task item with id {id} not found")
+
+    record = models.CompletionRecord(
+        task=daily_task_db)
+
+    # add it to the session and commit it
+    session.add(record)
+    session.commit()
+    session.refresh(record)
+
+    return daily_task_db
+
+
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_daily_task(id: int,
                       user: schemas.User = Depends(depends.get_current_user),

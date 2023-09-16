@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "User",
+    "type": "object",
+    "properties": {
+        "uid": {
+            "type": "integer"
+        },
+        "username": {
+            "type": "string"
+        },
+        "user_type": {
+            "type": "integer"
+        },
+        "create_time": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "create_time",
+        "uid",
+        "user_type",
+        "username"
+    ]
+}

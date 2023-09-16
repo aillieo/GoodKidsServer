@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "CompletionRecord",
+    "type": "object",
+    "properties": {
+        "time": {
+            "type": "integer"
+        },
+        "note": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "note",
+        "time"
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "DailyTask",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "taskName": {
+            "type": "string"
+        },
+        "taskDes": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "id",
+        "taskDes",
+        "taskName"
+    ]
+}

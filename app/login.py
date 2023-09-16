@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=schemas.Token)
-async def register(user_create: schemas.UserCreate, session: Session = Depends(depends.get_session)) -> schemas.Token:
+async def register(user_create: schemas.Login, session: Session = Depends(depends.get_session)) -> schemas.Token:
     user_db = session.query(models.User).filter(
         models.User.username == user_create.username).first()
 
@@ -40,7 +40,7 @@ async def register(user_create: schemas.UserCreate, session: Session = Depends(d
 
 
 @router.post("/login", response_model=schemas.Token)
-async def login(user_create: schemas.UserCreate, session: Session = Depends(depends.get_session)) -> schemas.Token:
+async def login(user_create: schemas.Login, session: Session = Depends(depends.get_session)) -> schemas.Token:
 
     user_db = session.query(models.User).filter(
         models.User.username == user_create.username).first()

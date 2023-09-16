@@ -28,7 +28,7 @@ def read_user(id: int, session: Session = Depends(depends.get_session)):
 
 
 @router.put("/{id}", response_model=schemas.User)
-def update_user(id: int, user: schemas.UserUpdate, session: Session = Depends(depends.get_session)):
+def update_user(id: int, user: schemas.User, session: Session = Depends(depends.get_session)):
 
     # get the user item with the given id
     user_db = session.query(models.User).get(id)

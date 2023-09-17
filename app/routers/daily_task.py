@@ -29,7 +29,9 @@ async def create_daily_task(daily_task: schemas.DailyTask,
     session.refresh(daily_task_db)
 
     # return the daily task object
-    return schemas.DailyTask(**vars(daily_task_db))
+
+    # return schemas.DailyTask(**vars(daily_task_db))
+    return vars(daily_task_db)
 
 
 @router.get("/{id}", response_model=schemas.DailyTask)
@@ -91,7 +93,8 @@ def update_daily_task(id: int,
     session.commit()
     session.refresh(record)
 
-    return schemas.DailyTask(**vars(daily_task_db))
+    # return schemas.DailyTask(**vars(daily_task_db))
+    return vars(daily_task_db)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -125,4 +128,5 @@ def read_daily_task_list(
         models.DailyTask.user_id == user.id).all()
 
     # return [schemas.DailyTask(id=t.id, taskName=t.taskName, taskDes=t.taskDes) for t in daily_task_list]
-    return [schemas.DailyTask(**vars(t)) for t in daily_task_list]
+    # return [schemas.DailyTask(**vars(t)) for t in daily_task_list]
+    return [vars(t) for t in daily_task_list]

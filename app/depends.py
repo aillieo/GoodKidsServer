@@ -30,14 +30,13 @@ def get_current_user(token: str = Depends(reusable_oauth2), session: Session = D
             token, security.JWT_SECRET_KEY, algorithms=[security.ALGORITHM]
         )
 
-        token_data = schemas.TokenPayload(**payload)
+        sub = payload["sub"]
+        user = session.query(models.User).get(int(sub))
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-
-    user = session.query(models.User).get(token_data.sub)
 
     # check if user item with given id exists. If not, raise exception and return 404 not found response
     if not user:

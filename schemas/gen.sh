@@ -51,7 +51,7 @@ for INPUT_FILE in "$INPUT_DIR"/*.json; do
   FILENAME="${FILENAME%.*}"
 
   # 生成 Python 代码
-  datamodel-codegen --input-file-type jsonschema --input "$INPUT_FILE" --output "$OUTPUT_PY_DIR/$FILENAME.py"
+  datamodel-codegen --input-file-type jsonschema --input "$INPUT_FILE" --output "$OUTPUT_PY_DIR/$FILENAME.py" --disable-timestamp
   # 添加 import 语句到 __init__.py 文件
   echo "from .$FILENAME import *" >> "$OUTPUT_PY_DIR/__init__.py"
 

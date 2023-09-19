@@ -3,7 +3,7 @@
 # 输入文件目录，输出文件目录
 INPUT_DIR="./json"
 #OUTPUT_PY_DIR="./out/python"
-OUTPUT_PY_DIR="../app/schemas"
+OUTPUT_PY_DIR="../app/schemas/gen"
 #OUTPUT_TS_DIR="./out/typescript"
 OUTPUT_TS_DIR="../../good-kids/assets/scripts/app/schemas"
 
@@ -58,3 +58,5 @@ for INPUT_FILE in "$INPUT_DIR"/*.json; do
   # 生成 TypeScript 代码
   json2ts "$INPUT_FILE" > "$OUTPUT_TS_DIR/$FILENAME.ts"
 done
+
+read -p "press any key to continue..."

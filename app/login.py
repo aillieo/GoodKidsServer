@@ -34,7 +34,7 @@ async def register(user_create: schemas.Login, session: Session = Depends(depend
     session.refresh(user_db)
 
     token = schemas.Token(
-        token=security.create_token(user_db.id),
+        token=security.create_token(str(user_db.id)),
         uid=user_db.id)
     return token
 
@@ -56,14 +56,14 @@ async def login(user_create: schemas.Login, session: Session = Depends(depends.g
         )
 
     token = schemas.Token(
-        token=security.create_token(user_db.id),
+        token=security.create_token(str(user_db.id)),
         uid=user_db.id)
     return token
 
 
 @router.get("/me", response_model=schemas.User)
 def get_me(
-        user: schemas.User = Depends(depends.get_current_user)):
+        user: models.User = Depends(depends.get_current_user)) -> models.User:
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 

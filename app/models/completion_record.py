@@ -7,7 +7,6 @@ from database import Base
 
 class CompletionRecord(Base):
     __tablename__ = 'completionrecords'
-    id = Column(Integer, primary_key=True)
     time = Column(DateTime, default=datetime.now)
     note = Column(String(256))
 

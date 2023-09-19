@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -6,7 +6,13 @@ from sqlalchemy.orm import sessionmaker
 engine = create_engine("sqlite:///gk.db")
 
 # Create a DeclarativeMeta instance
-Base = declarative_base()
+_Base = declarative_base()
+
+
+class Base(_Base):
+    __abstract__ = True
+    id = Column(Integer, primary_key=True)
+
 
 # Create SessionLocal class from sessionmaker factory
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)

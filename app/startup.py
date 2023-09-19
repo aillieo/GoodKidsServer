@@ -30,22 +30,22 @@ app.add_middleware(
 
 
 @app.get("/")
-def root():
+def root() -> str:
     return "good-kids-app"
 
 
-def register_routers(app):
+def register_routers(app: FastAPI) -> None:
     app.include_router(login.router)
     app.include_router(routers.router)
 
 
-async def shutdown():
+async def shutdown() -> None:
     tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
     [task.cancel() for task in tasks]
     await asyncio.gather(*tasks, return_exceptions=True)
 
 
-def shutdown_server(signum, frame):
+def shutdown_server(signum, frame) -> None:
     print(f"Received signal {signum}, shutting down server.")
     loop = asyncio.get_event_loop()
     loop.create_task(shutdown())

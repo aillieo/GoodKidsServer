@@ -8,7 +8,6 @@ from datetime import datetime
 
 class DailyTask(Base):
     __tablename__ = 'dailytasks'
-    id = Column(Integer, primary_key=True)
     taskName = Column(String(256))
     taskDes = Column(String(256))
     create_time = Column(DateTime, default=datetime.now)

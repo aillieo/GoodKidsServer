@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Generator
 from fastapi import status, Depends, HTTPException
 from pydantic import ValidationError
 from database import Base, engine, SessionLocal
@@ -24,7 +24,7 @@ def get_session():
         session.close()
 
 
-def get_current_user(token: str = Depends(reusable_oauth2), session: Session = Depends(get_session)) -> schemas.User:
+def get_current_user(token: str = Depends(reusable_oauth2), session: Session = Depends(get_session)) -> models.User:
     try:
         payload = jwt.decode(
             token, security.JWT_SECRET_KEY, algorithms=[security.ALGORITHM]

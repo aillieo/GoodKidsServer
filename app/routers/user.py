@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException, security
-from typing import List
+from typing import List, Optional
 from fastapi import FastAPI, status, HTTPException, Depends
+from crud import CRUD
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
 import models
@@ -14,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/{id}", response_model=schemas.User)
-def read_user(id: int, session: Session = Depends(depends.get_session)):
+def read_user(id: int, session: Session = Depends(depends.get_session)) -> models.User:
 
     # get the user item with the given id
     user = session.query(models.User).get(id)
@@ -28,15 +29,14 @@ def read_user(id: int, session: Session = Depends(depends.get_session)):
 
 
 @router.put("/{id}", response_model=schemas.User)
-def update_user(id: int, user: schemas.User, session: Session = Depends(depends.get_session)):
+def update_user(id: int, user: schemas.User, session: Session = Depends(depends.get_session)) -> models.User:
 
     # get the user item with the given id
-    user_db = session.query(models.User).get(id)
+    user_db: Optional[models.User] = CRUD.get(session, models.User, id)
 
     # update user item with the given user (if an item with the given id was found)
     if user_db:
-        user_db.name = user.name
-        user_db.password = user.password
+        user_db.username = user.username
         session.commit()
 
     # check if user item with given id exists. If not, raise exception and return 404 not found response
@@ -48,7 +48,7 @@ def update_user(id: int, user: schemas.User, session: Session = Depends(depends.
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(id: int, session: Session = Depends(depends.get_session)):
+def delete_user(id: int, session: Session = Depends(depends.get_session)) -> None:
 
     # get the user item with the given id
     user = session.query(models.User).get(id)
@@ -65,8 +65,7 @@ def delete_user(id: int, session: Session = Depends(depends.get_session)):
 
 
 @router.get("/", response_model=List[schemas.User])
-def read_user_list(session: Session = Depends(depends.get_session)):
-
+def read_user_list(session: Session = Depends(depends.get_session)) -> List[models.User]:
     # get all user items
     user_list = session.query(models.User).all()
 

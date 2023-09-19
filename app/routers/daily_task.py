@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Cookie, Request, HTTPException
 from typing import List
 from fastapi import FastAPI, status, HTTPException, Depends
+from crud import CRUD
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
 import models
@@ -17,7 +18,7 @@ router = APIRouter()
 async def create_daily_task(daily_task: schemas.DailyTask,
                             user: schemas.User = Depends(
                                 depends.get_current_user),
-                            session: Session = Depends(depends.get_session)):
+                            session: Session = Depends(depends.get_session)) -> models.DailyTask:
 
     # create an instance of the dailytask database model
     daily_task_db = models.DailyTask(
@@ -30,17 +31,17 @@ async def create_daily_task(daily_task: schemas.DailyTask,
 
     # return the daily task object
 
-    # return schemas.DailyTask(**vars(daily_task_db))
-    return vars(daily_task_db)
+    return daily_task_db
 
 
 @router.get("/{id}", response_model=schemas.DailyTask)
 def read_daily_task(id: int,
                     user: schemas.User = Depends(depends.get_current_user),
-                    session: Session = Depends(depends.get_session)):
+                    session: Session = Depends(depends.get_session)) -> models.DailyTask:
 
     # get the daily task item with the given id
-    daily_task = session.query(models.DailyTask).get(id)
+    # daily_task = session.query(models.DailyTask).get(id)
+    daily_task = CRUD.get(session, models.DailyTask, id)
 
     # check if daily task item with given id exists. If not, raise exception and return 404 not found response
     if not daily_task:
@@ -53,7 +54,7 @@ def read_daily_task(id: int,
 @router.put("/{id}", response_model=schemas.DailyTask)
 def update_daily_task(id: int, daily_task: schemas.DailyTask,
                       user: schemas.User = Depends(depends.get_current_user),
-                      session: Session = Depends(depends.get_session)):
+                      session: Session = Depends(depends.get_session)) -> models.DailyTask:
 
     # get the daily task item with the given id
     daily_task_db = session.query(models.DailyTask).get(id)
@@ -73,9 +74,9 @@ def update_daily_task(id: int, daily_task: schemas.DailyTask,
 
 
 @router.post("/{id}/complete", response_model=schemas.DailyTask)
-def update_daily_task(id: int,
-                      user: schemas.User = Depends(depends.get_current_user),
-                      session: Session = Depends(depends.get_session)):
+def complete_daily_task(id: int,
+                        user: schemas.User = Depends(depends.get_current_user),
+                        session: Session = Depends(depends.get_session)) -> models.DailyTask:
 
     # get the daily task item with the given id
     daily_task_db = session.query(models.DailyTask).get(id)
@@ -93,14 +94,13 @@ def update_daily_task(id: int,
     session.commit()
     session.refresh(record)
 
-    # return schemas.DailyTask(**vars(daily_task_db))
-    return vars(daily_task_db)
+    return daily_task_db
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_daily_task(id: int,
                       user: schemas.User = Depends(depends.get_current_user),
-                      session: Session = Depends(depends.get_session)):
+                      session: Session = Depends(depends.get_session)) -> None:
 
     # get the daily task item with the given id
     daily_task = session.query(models.DailyTask).get(id)
@@ -119,14 +119,17 @@ def delete_daily_task(id: int,
 @router.get("/", response_model=List[schemas.DailyTask])
 def read_daily_task_list(
         user: schemas.User = Depends(depends.get_current_user),
-        session: Session = Depends(depends.get_session)):
+        session: Session = Depends(depends.get_session)) -> List[models.DailyTask]:
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     # get all daily task items
-    daily_task_list = session.query(models.DailyTask).filter(
-        models.DailyTask.user_id == user.id).all()
+    # daily_task_list = session.query(models.DailyTask).filter(
+    #     models.DailyTask.user_id == user.uid).all()
+    daily_task_list = CRUD.get_multi(
+        session,
+        models.DailyTask,
+        filter_condition=models.DailyTask.user_id == user.id
+    )
 
-    # return [schemas.DailyTask(id=t.id, taskName=t.taskName, taskDes=t.taskDes) for t in daily_task_list]
-    # return [schemas.DailyTask(**vars(t)) for t in daily_task_list]
-    return [vars(t) for t in daily_task_list]
+    return daily_task_list

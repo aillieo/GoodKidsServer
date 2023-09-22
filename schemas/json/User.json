@@ -9,6 +9,9 @@
         "username": {
             "type": "string"
         },
+        "avatar": {
+            "type": "string"
+        },
         "user_type": {
             "type": "integer"
         },
@@ -17,6 +20,7 @@
         }
     },
     "required": [
+        "avatar",
         "create_time",
         "uid",
         "user_type",

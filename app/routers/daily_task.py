@@ -5,6 +5,7 @@ from crud import CRUD
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
 import models
+from schema_utils import SchemaUtils
 import schemas
 import depends
 
@@ -18,7 +19,7 @@ router = APIRouter()
 async def create_daily_task(daily_task: schemas.DailyTask,
                             user: schemas.User = Depends(
                                 depends.get_current_user),
-                            session: Session = Depends(depends.get_session)) -> models.DailyTask:
+                            session: Session = Depends(depends.get_session)) -> schemas.DailyTask:
 
     # create an instance of the dailytask database model
     daily_task_db = models.DailyTask(
@@ -31,7 +32,7 @@ async def create_daily_task(daily_task: schemas.DailyTask,
 
     # return the daily task object
 
-    return daily_task_db
+    return SchemaUtils.convert_daily_task(daily_task_db)
 
 
 @router.get("/{id}", response_model=schemas.DailyTask)
@@ -75,8 +76,8 @@ def update_daily_task(id: int, daily_task: schemas.DailyTask,
 
 @router.post("/{id}/complete", response_model=schemas.DailyTask)
 def complete_daily_task(id: int,
-                        user: schemas.User = Depends(depends.get_current_user),
-                        session: Session = Depends(depends.get_session)) -> models.DailyTask:
+                        user: models.User = Depends(depends.get_current_user),
+                        session: Session = Depends(depends.get_session)) -> schemas.DailyTask:
 
     # get the daily task item with the given id
     daily_task_db = session.query(models.DailyTask).get(id)
@@ -91,10 +92,26 @@ def complete_daily_task(id: int,
 
     # add it to the session and commit it
     session.add(record)
+
+    # add items to user
+    task_items: List[models.TaskItem] = daily_task_db.task_items
+    if task_items:
+        for item in task_items:
+            # check if owns any
+            existing_user_item = CRUD.get_with_filter(
+                session, models.UserItem, models.UserItem.user_id == user.id, models.UserItem.item_id == item.id)
+
+            if existing_user_item:
+                existing_user_item.quantity += item.quantity
+            else:
+                user_item = models.UserItem(
+                    user_id=user.id, item_id=item.id, quantity=item.quantity)
+                session.add(user_item)
+
     session.commit()
     session.refresh(record)
 
-    return daily_task_db
+    return SchemaUtils.convert_daily_task(daily_task_db)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -118,8 +135,8 @@ def delete_daily_task(id: int,
 
 @router.get("/", response_model=List[schemas.DailyTask])
 def read_daily_task_list(
-        user: schemas.User = Depends(depends.get_current_user),
-        session: Session = Depends(depends.get_session)) -> List[models.DailyTask]:
+        user: models.User = Depends(depends.get_current_user),
+        session: Session = Depends(depends.get_session)) -> List[schemas.DailyTask]:
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
@@ -132,4 +149,4 @@ def read_daily_task_list(
         filter_condition=models.DailyTask.user_id == user.id
     )
 
-    return daily_task_list
+    return [SchemaUtils.convert_daily_task(t) for t in daily_task_list]

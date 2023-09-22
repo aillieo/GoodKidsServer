@@ -3,10 +3,18 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from pydantic import BaseModel
+
+
+class CompletionRecord(BaseModel):
+    time: int
+    note: Optional[str]
 
 
 class DailyTask(BaseModel):
     id: int
     taskName: str
     taskDes: str
+    lastRecord: Optional[CompletionRecord]

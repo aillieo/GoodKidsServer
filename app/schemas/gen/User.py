@@ -9,5 +9,6 @@ from pydantic import BaseModel
 class User(BaseModel):
     uid: int
     username: str
+    avatar: str
     user_type: int
     create_time: int

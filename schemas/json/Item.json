@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "Item",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "icon": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "icon",
+        "id",
+        "name"
+    ]
+}

@@ -2,9 +2,9 @@
 
 # 输入文件目录，输出文件目录
 INPUT_DIR="./json"
-#OUTPUT_PY_DIR="./out/python"
+# OUTPUT_PY_DIR="./out/python"
 OUTPUT_PY_DIR="../app/schemas/gen"
-#OUTPUT_TS_DIR="./out/typescript"
+# OUTPUT_TS_DIR="./out/typescript"
 OUTPUT_TS_DIR="../../good-kids/assets/scripts/app/schemas"
 
 # 检查输入目录是否存在
@@ -41,6 +41,9 @@ if ! command -v json2ts &> /dev/null; then
     npm install -g json-schema-to-typescript
 fi
 
+# 保存当前目录到变量
+CURRENT_DIR=$(pwd)
+
 # 遍历输入目录中的所有 JSON 文件
 for INPUT_FILE in "$INPUT_DIR"/*.json; do
 
@@ -56,7 +59,8 @@ for INPUT_FILE in "$INPUT_DIR"/*.json; do
   echo "from .$FILENAME import *" >> "$OUTPUT_PY_DIR/__init__.py"
 
   # 生成 TypeScript 代码
-  json2ts "$INPUT_FILE" > "$OUTPUT_TS_DIR/$FILENAME.ts"
+  json2ts -i "$INPUT_FILE" -o "$OUTPUT_TS_DIR/$FILENAME.ts" --cwd "$CURRENT_DIR/$INPUT_DIR"
+
 done
 
 read -p "press any key to continue..."

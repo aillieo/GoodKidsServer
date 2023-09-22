@@ -11,11 +11,18 @@
         },
         "taskDes": {
             "type": "string"
+        },
+        "lastRecord": {
+            "oneOf": [
+                { "$ref": "CompletionRecord.json" },
+                { "type": "null" }
+            ]
         }
     },
     "required": [
         "id",
         "taskDes",
-        "taskName"
+        "taskName",
+        "lastRecord"
     ]
 }

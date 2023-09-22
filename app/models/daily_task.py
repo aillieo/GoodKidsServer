@@ -15,4 +15,7 @@ class DailyTask(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User', back_populates='daily_tasks')
 
-    completion_records = relationship('CompletionRecord', back_populates='task')
+    task_items = relationship('TaskItem', back_populates='task')
+
+    completion_records = relationship(
+        'CompletionRecord', back_populates='task')

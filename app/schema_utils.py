@@ -8,6 +8,14 @@ import utils
 class SchemaUtils():
 
     @staticmethod
+    def convert_user(user_db: models.User) -> schemas.User:
+        dict: Dict[str, Any] = vars(user_db)
+        dict["uid"] = user_db.id
+        dict["create_time"] = utils.get_timestamp(user_db.create_time)
+        user: schemas.User = schemas.User(**dict)
+        return user
+
+    @staticmethod
     def convert_daily_task(daily_task_db: models.DailyTask) -> schemas.DailyTask:
         dict: Dict[str, Any] = vars(daily_task_db)
         completion_record: Optional[models.CompletionRecord] = daily_task_db.completion_records[-1] if daily_task_db.completion_records else None

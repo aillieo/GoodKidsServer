@@ -6,6 +6,7 @@ from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
 import depends
 import models
+from schema_utils import SchemaUtils
 import schemas
 import security
 
@@ -67,4 +68,4 @@ def get_me(
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    return user
+    return SchemaUtils.convert_user(user)

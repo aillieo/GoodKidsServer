@@ -11,8 +11,8 @@ class User(Base):
     __tablename__ = 'users'
     username = Column(String)
     password = Column(String)
-    avatar = Column(String)
-    user_type = Column(Enum(UserType))
+    avatar = Column(String, default="")
+    user_type = Column(Enum(UserType), default=UserType.NORMAL)
     create_time = Column(DateTime, default=datetime.now)
     update_time = Column(DateTime, onupdate=datetime.now, default=datetime.now)
 

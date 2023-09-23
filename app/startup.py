@@ -1,7 +1,7 @@
 import asyncio
 import signal
 import uvicorn
-from fastapi import Cookie, FastAPI
+from fastapi import Cookie, FastAPI, HTTPException
 from typing import List
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
@@ -9,6 +9,7 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import routers
 import login
+import exception_handler
 
 # Create the database
 Base.metadata.create_all(engine)
@@ -39,6 +40,12 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(routers.router)
 
 
+def rigister_exception_handlers(app: FastAPI) -> None:
+    app.add_exception_handler(Exception, exception_handler.handle_exception)
+    app.add_exception_handler(
+        HTTPException, exception_handler.handle_exception)
+
+
 async def shutdown() -> None:
     tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
     [task.cancel() for task in tasks]
@@ -53,6 +60,7 @@ def shutdown_server(signum, frame) -> None:
 
 if __name__ == "__main__":
     register_routers(app)
+    # rigister_exception_handlers(app)
 
     loop = asyncio.get_event_loop()
     signal.signal(signal.SIGINT, lambda signum,

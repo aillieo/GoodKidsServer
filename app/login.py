@@ -64,7 +64,7 @@ async def login(user_create: schemas.Login, session: Session = Depends(depends.g
 
 @router.get("/me", response_model=schemas.User)
 def get_me(
-        user: models.User = Depends(depends.get_current_user)) -> models.User:
+        user: models.User = Depends(depends.get_current_user)) -> schemas.User:
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 

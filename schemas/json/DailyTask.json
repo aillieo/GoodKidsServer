@@ -17,12 +17,29 @@
                 { "$ref": "CompletionRecord.json" },
                 { "type": "null" }
             ]
+        },
+        "reward": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    {
+                        "type": "integer"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            }
         }
     },
     "required": [
         "id",
         "taskDes",
         "taskName",
-        "lastRecord"
+        "lastRecord",
+        "reward"
     ]
 }

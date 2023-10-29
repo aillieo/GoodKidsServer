@@ -3,12 +3,20 @@
 
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import BaseModel
+
+
+class UserType(Enum):
+    NORMAL = 'NORMAL'
+    ADVANCED = 'ADVANCED'
+    ADMIN = 'ADMIN'
 
 
 class User(BaseModel):
     uid: int
     username: str
     avatar: str
-    user_type: int
+    user_type: UserType
     create_time: int

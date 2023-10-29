@@ -13,7 +13,8 @@
             "type": "string"
         },
         "user_type": {
-            "type": "integer"
+            "type": "string",
+            "enum": ["NORMAL", "ADVANCED", "ADMIN"]
         },
         "create_time": {
             "type": "integer"

@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -18,3 +18,4 @@ class DailyTask(BaseModel):
     taskName: str
     taskDes: str
     lastRecord: Optional[CompletionRecord]
+    reward: List[List[int]]
